@@ -25,6 +25,7 @@ class Game {
         this.foods = []
         this.foodSpawnRate = 0.1
         this.score = 0
+        this.pointsForKillBot = 3
     }
 
     update() {
@@ -105,6 +106,8 @@ class Game {
                 } else if (botHead.pos.x === part.pos.x && botHead.pos.y === part.pos.y) {
                     // delete bot
                     this.bots.splice(i, 1)
+                    // add points
+                    this.score += this.pointsForKillBot
                 }
             })
         })
