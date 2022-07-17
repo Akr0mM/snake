@@ -1,1 +1,1 @@
-Simple Snake game with bot.
+Simple Snake game with bots using HTMLCanvas.
