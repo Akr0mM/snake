@@ -10,11 +10,13 @@ if (heightOffset != 0) canvas.height -= heightOffset
 
 let playerMoveDone = false
 let gameUpdate
+let matchHistory = []
 
 class Game {
     constructor() {
         if (confirm('Play ?')) {    
-            if (localStorage.getItem('HighScore') === null) localStorage.setItem('HighScore', 0)                                     
+            if (localStorage.getItem('HighScore') === null) localStorage.setItem('HighScore', 0)                                  
+            if (localStorage.getItem('MatchHistory') === null) localStorage.setItem('MatchHistory', JSON.stringify(matchHistory))                                  
             gameUpdate = setInterval(() => {
                 this.update()
                 this.draw()
@@ -208,6 +210,12 @@ class Game {
         alert('Game Over\nYou scored ' + game.score + ' points')
         // HighScore
         if (game.score > localStorage.getItem('HighScore')) localStorage.setItem('HighScore', game.score)
+        // Match History
+        matchHistory = localStorage.getItem('MatchHistory');
+        matchHistory = JSON.parse(matchHistory)
+        matchHistory.push(game.score)
+        localStorage.setItem('MatchHistory', JSON.stringify(matchHistory))
+        // reload and new game
         location.reload()
     }
 }
