@@ -52,7 +52,7 @@ class Game {
         // bots
         this.bots.forEach(bot => {
             let botHead = bot[0] 
-            let nearestTarget = botHead.calculateTarget()
+            let nearestTarget = botHead.calculateTarget() || this.foods[0]
             let distanceX = nearestTarget.pos.x
             let distanceY = nearestTarget.pos.y
             
@@ -213,7 +213,7 @@ class Game {
         // Match History
         matchHistory = localStorage.getItem('MatchHistory');
         matchHistory = JSON.parse(matchHistory)
-        matchHistory.push(game.score)
+        matchHistory.unshift(game.score)
         localStorage.setItem('MatchHistory', JSON.stringify(matchHistory))
         // reload and new game
         location.reload()
