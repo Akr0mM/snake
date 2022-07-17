@@ -158,12 +158,12 @@ class Game {
         else if (player.pos.y <= 0) player.pos.y = canvas.height
 
         // food spawn rate
-        if ((this.bots.length >= 5 && this.bots.length < 10) || (game.score >= 5 && game.score < 10)) this.foodSpawnRate = 0.2
-        if ((this.bots.length >= 10 && this.bots.length < 15) || (game.score >= 10 && game.score < 15)) this.foodSpawnRate = 0.3
-        if ((this.bots.length >= 15 && this.bots.length < 20) || (game.score >= 15 && game.score < 20)) this.foodSpawnRate = 0.4
-        if ((this.bots.length >= 20 && this.bots.length < 25) || (game.score >= 20 && game.score < 25)) this.foodSpawnRate = 0.5
-        if ((this.bots.length >= 25 && this.bots.length < 30) || (game.score >= 25 && game.score < 30)) this.foodSpawnRate = 0.6
-        if (this.bots.length >= 30 || game.score >= 30) this.foodSpawnRate = 0.7
+        if (game.score >= 5 && game.score < 10) this.foodSpawnRate = 0.2
+        else if (game.score >= 10 && game.score < 15) this.foodSpawnRate = 0.3
+        else if (game.score >= 15 && game.score < 20) this.foodSpawnRate = 0.4
+        else if (game.score >= 20 && game.score < 25) this.foodSpawnRate = 0.5
+        else if (game.score >= 25 && game.score < 30) this.foodSpawnRate = 0.6
+        else if (game.score >= 30) this.foodSpawnRate = 0.7
     }
 
     draw() {
