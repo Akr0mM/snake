@@ -53,8 +53,8 @@ class Game {
         this.bots.forEach(bot => {
             let botHead = bot[0] 
             let nearestTarget = botHead.calculateTarget() || this.foods[0]
-            let distanceX = nearestTarget.pos.x
-            let distanceY = nearestTarget.pos.y
+            let distanceX = nearestTarget.pos.x - botHead.pos.x
+            let distanceY = nearestTarget.pos.y - botHead.pos.y
             
             bot.forEach(part => {
                 let i = bot.indexOf(part)
@@ -68,19 +68,58 @@ class Game {
 
             if (botHead.pos.x != nearestTarget.pos.x && botHead.pos.y != nearestTarget.pos.y) {
                 if (distanceX > distanceY) {
-                    if (botHead.pos.x < nearestTarget.pos.x) botHead.pos.x += 20 
-                    if (botHead.pos.x > nearestTarget.pos.x) botHead.pos.x -= 20 
+                    if (botHead.pos.x < nearestTarget.pos.x) { 
+                        botHead.vel.x = 1 ; botHead.vel.y = 0
+                    }
+                    if (botHead.pos.x > nearestTarget.pos.x) { 
+                        botHead.vel.x = -1 ;  botHead.vel.y = 0
+                    } 
                 } else if (distanceY > distanceX) {
-                    if (botHead.pos.y < nearestTarget.pos.y) botHead.pos.y += 20 
-                    if (botHead.pos.y > nearestTarget.pos.y) botHead.pos.y -= 20 
+                    if (botHead.pos.y < nearestTarget.pos.y) { 
+                        botHead.vel.y = 1 ; botHead.vel.x = 0
+                     }
+                    if (botHead.pos.y > nearestTarget.pos.y) { 
+                        botHead.vel.y = -1 ; botHead.vel.x = 0
+                     } 
                 }
-            } else if (botHead.pos.x != nearestTarget.pos.x && botHead.pos.y == nearestTarget.pos.y) {
-                if (botHead.pos.x < nearestTarget.pos.x) botHead.pos.x += 20 
-                if (botHead.pos.x > nearestTarget.pos.x) botHead.pos.x -= 20 
-            } else if (botHead.pos.x == nearestTarget.pos.x && botHead.pos.y != nearestTarget.pos.y) {
-                if (botHead.pos.y < nearestTarget.pos.y) botHead.pos.y += 20 
-                if (botHead.pos.y > nearestTarget.pos.y) botHead.pos.y -= 20 
+            } else if (botHead.pos.x != nearestTarget.pos.x && botHead.pos.y === nearestTarget.pos.y) {
+                if (botHead.pos.x < nearestTarget.pos.x) { 
+                    if (botHead.vel.x === -1) {
+                        botHead.vel.x = 0
+                        botHead.vel.y = botHead.betterPath()
+                        return
+                    }
+                    botHead.vel.x = 1 ; botHead.vel.y = 0
+                 } 
+                if (botHead.pos.x > nearestTarget.pos.x) { 
+                    if (botHead.vel.x === 1) {
+                        botHead.vel.x = 0
+                        botHead.vel.y = botHead.betterPath()
+                        return
+                    }
+                    botHead.vel.x = -1 ; botHead.vel.y = 0
+                 } 
+            } else if (botHead.pos.x === nearestTarget.pos.x && botHead.pos.y != nearestTarget.pos.y) {
+                if (botHead.pos.y < nearestTarget.pos.y) { 
+                    if (botHead.vel.y === -1) {
+                        botHead.vel.x = botHead.betterPath()
+                        botHead.vel.y = 0
+                        return
+                    }
+                    botHead.vel.y = 1 ; botHead.vel.x = 0
+                 } 
+                if (botHead.pos.y > nearestTarget.pos.y) { 
+                    if (botHead.vel.y === 1) {
+                        botHead.vel.x = botHead.betterPath()
+                        botHead.vel.y = 0
+                        return
+                    }
+                    botHead.vel.y = -1 ; botHead.vel.x = 0
+                 } 
             }
+
+            botHead.pos.x += botHead.vel.x * 20
+            botHead.pos.y += botHead.vel.y * 20
         })
         // bot eat food
         this.bots.forEach(bot => {
@@ -157,18 +196,19 @@ class Game {
         })
         
         // check out of screen
-        if (player.pos.x >= canvas.width) player.pos.x = 0
-        else if (player.pos.x <= 0) player.pos.x = canvas.width
-        else if (player.pos.y >= canvas.height) player.pos.y = 0
-        else if (player.pos.y <= 0) player.pos.y = canvas.height
+        if (player.pos.x >= canvas.width) player.pos.x = 0 // droite
+        else if (player.pos.x <= -1) player.pos.x = canvas.width // gauche
+        else if (player.pos.y >= canvas.height) player.pos.y = 0 // bas
+        else if (player.pos.y <= -1) player.pos.y = canvas.height // haut
 
         // food spawn rate
-        if (game.score >= 5 && game.score < 10) this.foodSpawnRate = 0.2
-        else if (game.score >= 10 && game.score < 15) this.foodSpawnRate = 0.3
-        else if (game.score >= 15 && game.score < 20) this.foodSpawnRate = 0.4
-        else if (game.score >= 20 && game.score < 25) this.foodSpawnRate = 0.5
-        else if (game.score >= 25 && game.score < 30) this.foodSpawnRate = 0.6
-        else if (game.score >= 30) this.foodSpawnRate = 0.7
+        let parts = (game.player.length - 1) / 2
+        if (parts >= 5 && parts < 10) game.foodSpawnRate = 0.2
+        if (parts >= 10 && parts < 15) game.foodSpawnRate = 0.3
+        if (parts >= 15 && parts < 20) game.foodSpawnRate = 0.4
+        if (parts >= 20 && parts < 25) game.foodSpawnRate = 0.5
+        if (parts >= 25 && parts < 30) game.foodSpawnRate = 0.6
+        if (parts >= 30) game.foodSpawnRate = 0.7
     }
 
     draw() {
@@ -224,7 +264,7 @@ class Player {
     constructor(_x, _y) {
         this.prePos = { x: 0, y: 0 }
         this.pos = { x: _x, y: _y }
-        this.vel = { x: 0, y: 1 }
+        this.vel = { x: 1, y: 0 }
         game.player.push(this)
     }
 
@@ -246,6 +286,7 @@ class Bot {
     constructor() {
         this.prePos = { x: 0, y: 0 }
         this.pos = { x: Math.floor(Math.random() * canvas.width / 20) * 20, y: Math.floor(Math.random() * canvas.height / 20) * 20 }
+        this.vel = { x: 0, y: 0}
     }
 
     extand(i) {
@@ -271,6 +312,11 @@ class Bot {
             }
         })
         return betterTarget
+    }
+
+    betterPath() {
+        let possibleResult = [-1, 1]
+        return possibleResult[Math.floor(Math.random() * possibleResult.length)]
     }
 }
 
