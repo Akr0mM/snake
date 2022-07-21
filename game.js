@@ -52,7 +52,7 @@ class Game {
         // bots
         this.bots.forEach(bot => {
             let botHead = bot[0] 
-            let nearestTarget = botHead.calculateTarget() || this.foods[0]
+            let nearestTarget = botHead.calculateTarget() || this.foods[0] || this.foods[1] || this.foods[2]
             let distanceX = nearestTarget.pos.x - botHead.pos.x
             let distanceY = nearestTarget.pos.y - botHead.pos.y
             
